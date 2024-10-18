@@ -5,5 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 # set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 message( STATUS "Current system is :  ${CMAKE_SYSTEM_NAME}.")
 
+enable_testing()
 add_subdirectory(./src)
 add_subdirectory(./test)
