@@ -3,6 +3,7 @@ if(ENABLE_MAIN)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     file(GLOB UTILS_CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Utils/*.cpp)
     find_package(Boost COMPONENTS system filesystem thread REQUIRED)
+
     message( STATUS "UTILS_CPP_FILES is as following: ${UTILS_CPP_FILES} ")
 
     add_library(TestTool ${UTILS_CPP_FILES})
