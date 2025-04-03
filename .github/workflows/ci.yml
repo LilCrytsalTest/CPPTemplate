@@ -22,12 +22,12 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake g++ libgtest-dev clang-tidy libboost-all-dev
+        sudo apt-get install -y cmake g++ libgtest-dev clang-tidy libboost-all-dev ninja-build
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=./cmake/ubuntu-toolchain-x86-64.cmake .
+      run:  cmake --preset Linux-Debug && cmake -B ${{github.workspace}}/build .
 
     - name: Build
       # Build your program with the given configuration
