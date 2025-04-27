@@ -22,7 +22,7 @@ if(ENABLE_MAIN)
     target_link_libraries (${PROJECT_NAME}
         TestTool
     )
-    message( STATUS "Enable main process.")
+    message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 else()
     message( STATUS "No main process.")
 endif()
