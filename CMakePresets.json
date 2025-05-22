@@ -217,7 +217,7 @@
                 "CPACK_INSTALL_CMAKE_PROJECTS": "${sourceDir}"
             },
             "displayName": "Linux Package",
-            "packageName": "${projectName}-${projectVersion}-Linux",
+            "packageName": "${projectName}-${projectVersion}-Linux666",
             "packageDirectory": "${sourceDir}/dist"
         }
     ],
