@@ -7,59 +7,243 @@
     "configurePresets": [
         {
             "name": "Base",
-            "displayName": "Base",
+            "displayName": "Base Configuration",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CXX_STANDARD": "17",
-                "CMAKE_CXX_COMPILER": "g++"
+                "CMAKE_CXX_STANDARD": "17"
+            },
+            "environment": {
+                "CCACHE_DIR": "${sourceDir}/.ccache",
+                "CCACHE_MAXSIZE": "5G"
             }
         },
-
         {
-            "name": "Debug",
+            "name": "Base-Debug",
             "inherits": "Base",
-            "displayName": "Debug",
+            "displayName": "Base Debug Configuration",
+            "description": "Common settings for debug builds",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS": "-g -O0",
+                "CMAKE_CXX_FLAGS": "-g -O0",
+                "CMAKE_VERBOSE_MAKEFILE": "ON",
+                "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "OFF",
                 "ENABLE_TESTS": "ON",
                 "ENABLE_COVERAGE": "ON",
                 "ENABLE_WARNINGS": "ON"
             }
         },
-
         {
-            "name": "Release",
+            "name": "Base-Release",
             "inherits": "Base",
-            "displayName": "Release",
+            "displayName": "Base Release Configuration",
+            "description": "Common settings for release builds",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "ENABLE_WARNINGS": "OFF"
+                "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON",
+                "CMAKE_C_FLAGS": "-O3",
+                "CMAKE_CXX_FLAGS": "-O3",
+                "ENABLE_TESTS": "OFF",
+                "ENABLE_COVERAGE": "OFF",
+                "ENABLE_WARNINGS": "ON"
             }
         },
-
         {
             "name": "Linux-Debug",
-            "inherits": "Debug",
+            "inherits": "Base-Debug",
             "displayName": "Linux-Debug",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_C_FLAGS": "-Wall -Wextra",
                 "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_CXX_FLAGS": "-Wall -Wextra"
+                "CMAKE_C_FLAGS": "${presetParentCacheVariables.CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Wconversion -Wshadow",
+                "CMAKE_CXX_FLAGS": "${presetParentCacheVariables.CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wno-unknown-pragmas",
+                "CPACK_PACKAGE_VERSION": "3.28.3"
             }
-
+        },
+        {
+            "name": "Linux-Release",
+            "inherits": "Base-Release",
+            "displayName": "Linux Release",
+            "description": "Optimized release build for Linux",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_C_FLAGS": "${presetParentCacheVariables.CMAKE_C_FLAGS} -march=native -flto",
+                "CMAKE_CXX_FLAGS": "${presetParentCacheVariables.CMAKE_CXX_FLAGS} -march=native -flto"
+            }
+        },
+        {
+            "name": "Windows-Debug",
+            "inherits": "Base-Debug",
+            "displayName": "Windows Debug",
+            "description": "Debug build for Windows with Visual Studio",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_C_FLAGS": "${presetParentCacheVariables.CMAKE_C_FLAGS} /W4 /permissive-",
+                "CMAKE_CXX_FLAGS": "${presetParentCacheVariables.CMAKE_CXX_FLAGS} /W4 /permissive-",
+                "CMAKE_EXE_LINKER_FLAGS": "/INCREMENTAL:NO"
+            }
+        },
+        {
+            "name": "Windows-Release",
+            "inherits": "Base-Release",
+            "displayName": "Windows Release",
+            "description": "Optimized release build for Windows",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_C_FLAGS": "${presetParentCacheVariables.CMAKE_C_FLAGS} /O2 /GL",
+                "CMAKE_CXX_FLAGS": "${presetParentCacheVariables.CMAKE_CXX_FLAGS} /O2 /GL",
+                "CMAKE_EXE_LINKER_FLAGS": "/LTCG"
+            }
+        },
+        {
+            "name": "macOS-Debug",
+            "inherits": "Base-Debug",
+            "displayName": "macOS Debug",
+            "description": "Debug build for macOS",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_C_FLAGS": "${presetParentCacheVariables.CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Wconversion -Wshadow",
+                "CMAKE_CXX_FLAGS": "${presetParentCacheVariables.CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wconversion -Wshadow"
+            }
+        },
+        {
+            "name": "macOS-Release",
+            "inherits": "Base-Release",
+            "displayName": "macOS Release",
+            "description": "Optimized release build for macOS",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_C_FLAGS": "${presetParentCacheVariables.CMAKE_C_FLAGS} -march=native -flto",
+                "CMAKE_CXX_FLAGS": "${presetParentCacheVariables.CMAKE_CXX_FLAGS} -march=native -flto"
+            }
         }
     ],
-
     "buildPresets": [
         {
-            "name": "debug",
+            "name": "Linux-Debug",
             "configurePreset": "Linux-Debug",
+            "description": "Build debug configuration on Linux",
             "targets": [
                 "all"
+            ],
+            "jobs": 8,
+            "environment": {
+                "CCACHE_MAXSIZE": "5G"
+            }
+        },
+        {
+            "name": "Linux-Release",
+            "configurePreset": "Linux-Release",
+            "description": "Build release configuration on Linux",
+            "targets": [
+                "all"
+            ],
+            "jobs": 8
+        },
+        {
+            "name": "windows-debug",
+            "configurePreset": "Windows-Debug",
+            "description": "Build debug configuration on Windows",
+            "targets": [
+                "ALL_BUILD"
+            ],
+            "environment": {
+                "VCPKG_ROOT": "$ENV{VCPKG_ROOT}"
+            }
+        },
+        {
+            "name": "windows-release",
+            "configurePreset": "Windows-Release",
+            "description": "Build release configuration on Windows",
+            "targets": [
+                "ALL_BUILD"
+            ]
+        },
+        {
+            "name": "macos-debug",
+            "configurePreset": "macOS-Debug",
+            "description": "Build debug configuration on macOS",
+            "targets": [
+                "all"
+            ],
+            "jobs": 8
+        },
+        {
+            "name": "macos-release",
+            "configurePreset": "macOS-Release",
+            "description": "Build release configuration on macOS",
+            "targets": [
+                "all"
+            ],
+            "jobs": 8
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "Linux_Test",
+            "description": "Run all tests",
+            "displayName": "Linux Test",
+            "configurePreset": "Linux-Debug",
+            "output": {
+                "verbosity": "default",
+                "debug": true,
+                "outputOnFailure": true
+            },
+            "execution": {
+                "stopOnFailure": true
+            }
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "Linux-package",
+            "configurePreset": "Linux-Debug",
+            "description": "Create Linux packages (TGZ)",
+            "generators": [
+                "TGZ"
+            ],
+            "variables": {
+                "CPACK_PACKAGE_VERSION": "3.28.3",
+                "CPACK_INSTALL_CMAKE_PROJECTS": "${sourceDir}"
+            },
+            "displayName": "Linux Package",
+            "packageName": "${projectName}-${projectVersion}-Linux",
+            "packageDirectory": "${sourceDir}/dist"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "linux-full-build-test",
+            "displayName": "Linux: Full Build and Test",
+            "description": "Build, test and generate coverage report on Linux",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "Linux-Debug"
+                },
+                {
+                    "type": "build",
+                    "name": "Linux-Debug"
+                },
+                {
+                    "type": "test",
+                    "name": "Linux_test"
+                },
+                {
+                    "type": "package",
+                    "name": "Linux-package"
+                }
             ]
         }
-
     ]
 }
